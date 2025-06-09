@@ -1,3 +1,4 @@
+using APBD_TEST2.Models.DTOs;
 using APBD_TEST2.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,5 +26,27 @@ namespace APBD_TEST2.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddCustomerWithTickets([FromBody] CustomerPurchasePOSTDTO dto)
+        {
+            try
+            {
+                await _customerService.AddCustomerTicketPurchaseAsync(dto);
+                return Created("", null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        
     }
 }
